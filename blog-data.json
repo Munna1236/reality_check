@@ -25,6 +25,6 @@
         "slug": "The_rise_of_Quantum_Computing",
         "date": "2025-07-31",
         "category":"Technology",
-        "preview": "quantum computers use quantum bits that can exits in multiple states...."
+        "preview": "Quantum computers use quantum bits, or qubits, that can exist in multiple states at once due to a phenomenon called superposition, allowing them to perform complex computations far more efficiently than classical bits"
     }
 ]
