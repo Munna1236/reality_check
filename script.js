@@ -13,7 +13,7 @@ fetch('blog-data.json')
       blog.innerHTML = `
         <h2>${post.title}</h2>
         <p><em>${post.date}</em> | <strong>${post.category || "General"}</strong></p>
-        <p>${post.preview}</p>
+        <p>${post.preview || "No preview available."}</p> 
       `;
       container.appendChild(blog);
     });
