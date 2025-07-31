@@ -20,4 +20,10 @@
   "category": "Conspiracy",
   "preview": "Dive into the mysterious world of secret societies like the Illuminati and Freemasons—exploring what’s fact, what’s fiction, and why they capture our imagination."
 }
+    {
+    "title": "The rise of the quantum computing",
+        "date": "2025-07-31",
+        "category":"Technology",
+        "content":"quantum computers use quantum bits that can exits in multiple states...."
+    }
 ]
