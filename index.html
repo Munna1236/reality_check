@@ -4,21 +4,389 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Blog</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Base styling */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      padding: 20px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    body.light-mode {
+      background-color: #fdfdfd;
+      color: #333;
+    }
+
+    body.dark-mode {
+      background-color: #1a1a1a;
+      color: #e0e0e0;
+    }
+
+    /* Navigation bar */
+    nav {
+      background: #222;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 20px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+    }
+
+    body.dark-mode nav {
+      background: #0d0d0d;
+    }
+
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 18px;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+      color: #4CAF50;
+    }
+
+    /* Toggle Switch */
+    .theme-toggle {
+      position: relative;
+      width: 60px;
+      height: 30px;
+      background: #555;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .theme-toggle.active {
+      background: #4CAF50;
+    }
+
+    .theme-toggle::before {
+      content: '☀️';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 24px;
+      height: 24px;
+      background: white;
+      border-radius: 50%;
+      transition: transform 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    .theme-toggle.active::before {
+      content: '🌙';
+      transform: translateX(30px);
+    }
+
+    /* Main heading */
+    h1 {
+      color: #2c3e50;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    body.dark-mode h1 {
+      color: #4CAF50;
+    }
+
+    /* Blog container */
+    #blog-container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* Blog post preview */
+    .blog-post-wrapper {
+      background: #fff;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease, background 0.3s ease;
+    }
+
+    body.dark-mode .blog-post-wrapper {
+      background: #2a2a2a;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+
+    .blog-post-wrapper:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    body.dark-mode .blog-post-wrapper:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.7);
+    }
+
+    .blog-post-link {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+
+    .blog-post-link h2 {
+      color: #2c3e50;
+      margin-bottom: 10px;
+    }
+
+    body.dark-mode .blog-post-link h2 {
+      color: #4CAF50;
+    }
+
+    .blog-post-link p {
+      margin: 10px 0;
+    }
+
+    /* Like/Dislike buttons */
+    .reaction-buttons {
+      display: flex;
+      gap: 15px;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid #eee;
+    }
+
+    body.dark-mode .reaction-buttons {
+      border-top: 1px solid #444;
+    }
+
+    .reaction-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border: 2px solid #ddd;
+      background: transparent;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      color: inherit;
+    }
+
+    body.dark-mode .reaction-btn {
+      border-color: #555;
+    }
+
+    .reaction-btn:hover {
+      transform: scale(1.05);
+    }
+
+    .reaction-btn.like-btn:hover {
+      border-color: #4CAF50;
+      color: #4CAF50;
+    }
+
+    .reaction-btn.like-btn.active {
+      background: #4CAF50;
+      color: white;
+      border-color: #4CAF50;
+    }
+
+    .reaction-btn.dislike-btn:hover {
+      border-color: #f44336;
+      color: #f44336;
+    }
+
+    .reaction-btn.dislike-btn.active {
+      background: #f44336;
+      color: white;
+      border-color: #f44336;
+    }
+
+    .reaction-count {
+      font-weight: bold;
+      min-width: 20px;
+    }
+
+    /* Responsive design */
+    @media screen and (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+
+      nav {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      nav a {
+        font-size: 16px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      .blog-post-wrapper {
+        padding: 15px;
+      }
+    }
+  </style>
 </head>
-<body>
+<body class="light-mode">
   <nav>
     <a href="index.html">Home</a>
     <a href="about.html">About</a>
+    <div class="theme-toggle" id="themeToggle"></div>
   </nav>
 
   <h1>My Blog Posts</h1>
   <div id="blog-container"></div>
-  <div id="blog-container">
-  <!-- Blog previews will be added by JavaScript -->
-</div>
 
+  <script>
+    // Blog data
+    const blogData = [
+      {
+        "title": "Understanding Artificial Intelligence: The Future is Now",
+        "slug": "ai-future",
+        "date": "2025-06-06",
+        "category": "Technology",
+        "preview": "Artificial Intelligence (AI) is changing how we live and work every day. From virtual assistants to self-driving cars, AI is becoming a vital part of modern life."
+      },
+      {
+        "title": "🇮🇳 Starlink's Imminent Launch in India",
+        "slug": "starlink-india-launch",
+        "date": "2025-06-06",
+        "category": "Technology",
+        "preview": "Starlink is set to launch satellite internet in India soon, promising fast, affordable access for rural areas and a major shift in digital connectivity."
+      },
+      {
+        "title": "The Secret Societies: Illuminati & Freemasons",
+        "slug": "secret-societies-illuminati-freemasons",
+        "date": "2025-06-06",
+        "category": "Conspiracy",
+        "preview": "Dive into the mysterious world of secret societies like the Illuminati and Freemasons—exploring what's fact, what's fiction, and why they capture our imagination."
+      },
+      {
+        "title": "The rise of the quantum computing",
+        "slug": "The_rise_of_Quantum_Computing",
+        "date": "2025-07-31",
+        "category": "Technology",
+        "preview": "Quantum computers use quantum bits, or qubits, that can exist in multiple states at once due to a phenomenon called superposition, allowing them to perform complex computations far more efficiently than classical bits"
+      }
+    ];
 
-  <script src="script.js"></script>
+    // Theme toggle functionality
+    const themeToggle = document.getElementById('themeToggle');
+    const body = document.body;
+
+    // Load saved theme
+    const savedTheme = localStorage.getItem('theme') || 'light-mode';
+    body.className = savedTheme;
+    if (savedTheme === 'dark-mode') {
+      themeToggle.classList.add('active');
+    }
+
+    themeToggle.addEventListener('click', () => {
+      if (body.classList.contains('light-mode')) {
+        body.classList.replace('light-mode', 'dark-mode');
+        themeToggle.classList.add('active');
+        localStorage.setItem('theme', 'dark-mode');
+      } else {
+        body.classList.replace('dark-mode', 'light-mode');
+        themeToggle.classList.remove('active');
+        localStorage.setItem('theme', 'light-mode');
+      }
+    });
+
+    // Load reactions from storage
+    const reactions = JSON.parse(localStorage.getItem('blogReactions')) || {};
+
+    // Initialize reactions for all posts
+    blogData.forEach(post => {
+      if (!reactions[post.slug]) {
+        reactions[post.slug] = { likes: 0, dislikes: 0, userReaction: null };
+      }
+    });
+
+    // Render blog posts
+    const container = document.getElementById('blog-container');
+    blogData.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    blogData.forEach(post => {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'blog-post-wrapper';
+
+      const postReaction = reactions[post.slug];
+
+      wrapper.innerHTML = `
+        <a href="${post.slug}.html" class="blog-post-link">
+          <h2>${post.title}</h2>
+          <p><em>${post.date}</em> | <strong>${post.category || "General"}</strong></p>
+          <p>${post.preview || "No preview available."}</p>
+        </a>
+        <div class="reaction-buttons">
+          <button class="reaction-btn like-btn ${postReaction.userReaction === 'like' ? 'active' : ''}" data-slug="${post.slug}" data-type="like">
+            👍 <span class="reaction-count">${postReaction.likes}</span>
+          </button>
+          <button class="reaction-btn dislike-btn ${postReaction.userReaction === 'dislike' ? 'active' : ''}" data-slug="${post.slug}" data-type="dislike">
+            👎 <span class="reaction-count">${postReaction.dislikes}</span>
+          </button>
+        </div>
+      `;
+
+      container.appendChild(wrapper);
+    });
+
+    // Handle like/dislike clicks
+    container.addEventListener('click', (e) => {
+      const btn = e.target.closest('.reaction-btn');
+      if (!btn) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      const slug = btn.dataset.slug;
+      const type = btn.dataset.type;
+      const postReaction = reactions[slug];
+
+      // Toggle reaction
+      if (postReaction.userReaction === type) {
+        // Remove reaction
+        postReaction[type === 'like' ? 'likes' : 'dislikes']--;
+        postReaction.userReaction = null;
+        btn.classList.remove('active');
+      } else {
+        // Add or switch reaction
+        if (postReaction.userReaction) {
+          // Remove previous reaction
+          const prevType = postReaction.userReaction;
+          postReaction[prevType === 'like' ? 'likes' : 'dislikes']--;
+          const prevBtn = container.querySelector(`[data-slug="${slug}"][data-type="${prevType}"]`);
+          prevBtn.classList.remove('active');
+          prevBtn.querySelector('.reaction-count').textContent = postReaction[prevType === 'like' ? 'likes' : 'dislikes'];
+        }
+
+        // Add new reaction
+        postReaction[type === 'like' ? 'likes' : 'dislikes']++;
+        postReaction.userReaction = type;
+        btn.classList.add('active');
+      }
+
+      // Update count display
+      btn.querySelector('.reaction-count').textContent = postReaction[type === 'like' ? 'likes' : 'dislikes'];
+
+      // Save to localStorage
+      localStorage.setItem('blogReactions', JSON.stringify(reactions));
+    });
+  </script>
 </body>
 </html>
