@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Blog</title>
   <style>
-    /* Base styling */
+      /* Base styling */
     * {
       margin: 0;
       padding: 0;
@@ -291,10 +291,8 @@
     <a href="about.html">About</a>
     <div class="theme-toggle" id="themeToggle"></div>
   </nav>
-
   <h1>My Blog Posts</h1>
   <div id="blog-container"></div>
-
   <script>
     // Blog data
     const blogData = [
@@ -331,14 +329,11 @@
     // Theme toggle functionality
     const themeToggle = document.getElementById('themeToggle');
     const body = document.body;
-
-    // Load saved theme
     const savedTheme = localStorage.getItem('theme') || 'light-mode';
     body.className = savedTheme;
     if (savedTheme === 'dark-mode') {
       themeToggle.classList.add('active');
     }
-
     themeToggle.addEventListener('click', () => {
       if (body.classList.contains('light-mode')) {
         body.classList.replace('light-mode', 'dark-mode');
@@ -351,12 +346,12 @@
       }
     });
 
-    // Storage functions for persistent reactions
-    async function loadGlobalReactions() {
+    // Storage functions for local persistence
+    function loadGlobalReactions() {
       try {
-        const result = await window.storage.get('blog-reactions', true);
-        if (result && result.value) {
-          return JSON.parse(result.value);
+        const data = localStorage.getItem('blog-reactions');
+        if (data) {
+          return JSON.parse(data);
         }
         return {};
       } catch (error) {
@@ -364,20 +359,18 @@
         return {};
       }
     }
-
-    async function saveGlobalReactions(reactions) {
+    function saveGlobalReactions(reactions) {
       try {
-        await window.storage.set('blog-reactions', JSON.stringify(reactions), true);
+        localStorage.setItem('blog-reactions', JSON.stringify(reactions));
       } catch (error) {
         console.error('Error saving reactions:', error);
       }
     }
-
-    async function loadUserReactions() {
+    function loadUserReactions() {
       try {
-        const result = await window.storage.get('user-reactions', false);
-        if (result && result.value) {
-          return JSON.parse(result.value);
+        const data = localStorage.getItem('user-reactions');
+        if (data) {
+          return JSON.parse(data);
         }
         return {};
       } catch (error) {
@@ -385,25 +378,22 @@
         return {};
       }
     }
-
-    async function saveUserReactions(userReactions) {
+    function saveUserReactions(userReactions) {
       try {
-        await window.storage.set('user-reactions', JSON.stringify(userReactions), false);
+        localStorage.setItem('user-reactions', JSON.stringify(userReactions));
       } catch (error) {
         console.error('Error saving user reactions:', error);
       }
     }
 
     // Initialize and render blog posts
-    async function initializeBlog() {
+    function initializeBlog() {
       const container = document.getElementById('blog-container');
       container.innerHTML = '<div class="loading">Loading reactions...</div>';
 
-      // Load global reaction counts (shared across all users)
-      const globalReactions = await loadGlobalReactions();
-      
-      // Load user's personal reactions (which posts they liked/disliked)
-      const userReactions = await loadUserReactions();
+      // Load reactions
+      const globalReactions = loadGlobalReactions();
+      const userReactions = loadUserReactions();
 
       // Initialize reactions for all posts
       blogData.forEach(post => {
@@ -411,9 +401,7 @@
           globalReactions[post.slug] = { likes: 0, dislikes: 0 };
         }
       });
-
-      // Save initial state if new
-      await saveGlobalReactions(globalReactions);
+      saveGlobalReactions(globalReactions);
 
       // Sort and render posts
       container.innerHTML = '';
@@ -441,12 +429,11 @@
             </button>
           </div>
         `;
-
         container.appendChild(wrapper);
       });
 
       // Handle like/dislike clicks
-      container.addEventListener('click', async (e) => {
+      container.addEventListener('click', (e) => {
         const btn = e.target.closest('.reaction-btn');
         if (!btn) return;
 
@@ -455,11 +442,11 @@
 
         const slug = btn.dataset.slug;
         const type = btn.dataset.type;
-        
+
         // Load current state
-        const currentGlobalReactions = await loadGlobalReactions();
-        const currentUserReactions = await loadUserReactions();
-        
+        const currentGlobalReactions = loadGlobalReactions();
+        const currentUserReactions = loadUserReactions();
+
         const postReaction = currentGlobalReactions[slug];
         const previousUserReaction = currentUserReactions[slug];
 
@@ -476,22 +463,18 @@
             const prevType = previousUserReaction;
             postReaction[prevType === 'like' ? 'likes' : 'dislikes']--;
             const prevBtn = container.querySelector(`[data-slug="${slug}"][data-type="${prevType}"]`);
-            prevBtn.classList.remove('active');
-            prevBtn.querySelector('.reaction-count').textContent = postReaction[prevType === 'like' ? 'likes' : 'dislikes'];
+            if (prevBtn) {
+              prevBtn.classList.remove('active');
+              prevBtn.querySelector('.reaction-count').textContent = postReaction[prevType === 'like' ? 'likes' : 'dislikes'];
+            }
           }
-
-          // Add new reaction
           postReaction[type === 'like' ? 'likes' : 'dislikes']++;
           currentUserReactions[slug] = type;
           btn.classList.add('active');
         }
-
-        // Update count display
         btn.querySelector('.reaction-count').textContent = postReaction[type === 'like' ? 'likes' : 'dislikes'];
-
-        // Save both global and user reactions
-        await saveGlobalReactions(currentGlobalReactions);
-        await saveUserReactions(currentUserReactions);
+        saveGlobalReactions(currentGlobalReactions);
+        saveUserReactions(currentUserReactions);
       });
     }
 
